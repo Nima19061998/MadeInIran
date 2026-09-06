@@ -1,17 +1,23 @@
 ﻿public static class Constants
 {
-    public static class Simulations
+    public static class Simulation
     {
-        public const int TICK_RATE = 30;
+        public const int TickRate = 30;
+        public const float TickDelta = 1f / TickRate;
     }
 
     public static class World
     {
-        public const int UNITS_PER_MM = 100;
-        public const int UNITS_PER_CM = 1000;
-        public const int UNITS_PER_METER = 100_000;
+        // 1 unit = 0.01 mm  →  100 units = 1 mm
+        public const int UnitsPerMillimeter = 100;
 
-        public const int WORLD_SIZE_METERS = 10_000;
-        public const int WORLD_SIZE_UNITS = WORLD_SIZE_METERS * UNITS_PER_METER;
+        // 1000 units = 1 cm
+        public const int UnitsPerCentimeter = 1000;
+
+        // 100_000 units = 1 meter
+        public const int UnitsPerMeter = 100_000;
+
+        public const int SizeInMeters = 10_000;
+        public const int SizeInUnits = SizeInMeters * UnitsPerMeter;
     }
 }

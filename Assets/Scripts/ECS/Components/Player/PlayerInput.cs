@@ -1,8 +1,7 @@
-using Unity.Entities;
-using Unity.NetCode;
 using Unity.Mathematics;
+using Unity.NetCode;
 
 public struct PlayerInput : IInputComponentData
 {
-    public int2 move;
+    public float2 Move;
 }

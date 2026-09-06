@@ -1,31 +1,28 @@
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Mathematics;
+using Unity.NetCode;
+using Unity.Transforms;
 
 [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial struct PlayerMovementSystem : ISystem
 {
-    private const int SPEED_CM_PER_SECOND = 300;
+    private const float Speed = 6f;
 
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
 
-        foreach (var (position, input) in
-                 SystemAPI.Query<
-                     RefRW<Position>,
-                     RefRO<PlayerInput>>())
+        foreach (var (transform, input) in
+                 SystemAPI.Query<RefRW<LocalTransform>, RefRO<PlayerInput>>()
+                          .WithAll<Simulate>())
         {
-            int2 move = input.ValueRO.move;
+            float2 move = input.ValueRO.Move;
 
-            if (move.x == 0 && move.y == 0)
+            if (math.lengthsq(move) < 0.0001f)
                 continue;
 
-            int delta = (int)(SPEED_CM_PER_SECOND * deltaTime);
-
-            position.ValueRW.value.x += move.x * delta;
-            position.ValueRW.value.z += move.y * delta;
+            float3 direction = new float3(move.x, 0f, move.y);
+            transform.ValueRW.Position += direction * Speed * deltaTime;
         }
     }
 }

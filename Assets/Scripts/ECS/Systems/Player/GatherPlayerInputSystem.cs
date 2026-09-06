@@ -1,6 +1,6 @@
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Mathematics;
+using Unity.NetCode;
 using UnityEngine;
 
 [UpdateInGroup(typeof(GhostInputSystemGroup))]
@@ -17,28 +17,17 @@ public partial struct GatherPlayerInputSystem : ISystem
         float x = 0f;
         float z = 0f;
 
-        if (Input.GetKey(KeyCode.A))
-            x -= 1f;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) x -= 1f;
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) x += 1f;
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) z -= 1f;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) z += 1f;
 
-        if (Input.GetKey(KeyCode.D))
-            x += 1f;
+        float2 move = math.normalizesafe(new float2(x, z));
 
-        if (Input.GetKey(KeyCode.S))
-            z -= 1f;
-
-        if (Input.GetKey(KeyCode.W))
-            z += 1f;
-
-        int2 move = new int2(
-            math.clamp((int)x, -1, 1),
-            math.clamp((int)z, -1, 1)
-        );
-
-        foreach (var input in
-                 SystemAPI.Query<RefRW<PlayerInput>>()
-                 .WithAll<GhostOwnerIsLocal>())
+        foreach (var input in SystemAPI.Query<RefRW<PlayerInput>>()
+                                       .WithAll<GhostOwnerIsLocal>())
         {
-            input.ValueRW.move = move;
+            input.ValueRW.Move = move;
         }
     }
 }
